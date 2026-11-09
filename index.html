@@ -1,0 +1,1108 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>📊 Identifying Biased Survey Questions - رياضيات 12 عام | Mr. Mohammed Hesham</title>
+<meta name="description" content="امتحان تفاعلي عن إعداد دراسات إحصائية وتحديد الأسئلة المتحيزة - صف 12 عام">
+<meta name="author" content="Mr. Mohammed Hesham">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Inter:wght@400;600;700&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+<style>
+body { font-family: 'Cairo', sans-serif; background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); }
+body.en-mode { font-family: 'Inter', sans-serif; direction: ltr; }
+.arabic-math { font-family: 'Amiri', 'Cairo', serif; }
+.correct { background-color: #dcfce7 !important; border-color: #16a34a !important; }
+.incorrect { background-color: #fee2e2 !important; border-color: #dc2626 !important; }
+.timer-warning { color: #dc2626 !important; animation: pulse 1s infinite; }
+@keyframes pulse { 50% { opacity: 0.7; } }
+@media print { .no-print { display: none !important; } }
+.success-badge { display: inline-block; padding: 4px 12px; border-radius: 20px; font-weight: bold; font-size: 0.875rem; }
+.grade-excellent { background: #dcfce7; color: #166534; }
+.grade-good { background: #fef3c7; color: #92400e; }
+.grade-pass { background: #dbeafe; color: #1e40af; }
+.grade-fail { background: #fee2e2; color: #991b1b; }
+.lang-switch { position: fixed; top: 16px; left: 16px; z-index: 100; background: white; padding: 6px; border-radius: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.15); display: flex; gap: 4px; border: 2px solid #d97706; }
+body.en-mode .lang-switch { left: auto; right: 16px; }
+.lang-btn { padding: 6px 14px; border-radius: 20px; cursor: pointer; font-weight: bold; transition: all 0.3s; border: none; font-size: 0.875rem; background: transparent; color: #6b7280; }
+.lang-btn.active { background: #d97706; color: white; box-shadow: 0 2px 6px rgba(217,119,6,0.4); }
+.shuffle-badge { display: inline-block; background: linear-gradient(135deg, #d97706, #b45309); color: white; padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: bold; margin-right: 8px; }
+body.en-mode .shuffle-badge { margin-right: 0; margin-left: 8px; }
+.math-display { display: inline-block; direction: ltr; font-family: 'Amiri', serif; font-size: 1.1em; padding: 2px 6px; background: #fef3c7; border-radius: 4px; margin: 2px; color: #92400e; font-weight: 600; }
+.save-indicator { position: fixed; bottom: 20px; left: 20px; z-index: 200; background: #10b981; color: white; padding: 8px 16px; border-radius: 20px; font-size: 0.8rem; font-weight: bold; opacity: 0; transition: opacity 0.3s; pointer-events: none; }
+body.en-mode .save-indicator { left: auto; right: 20px; }
+.save-indicator.show { opacity: 1; }
+.formula-box { background: #fef3c7; border: 2px solid #f59e0b; border-radius: 8px; padding: 12px; margin: 10px 0; text-align: center; }
+.svg-graph { display: block; margin: 12px auto; background: white; border: 2px solid #e5e7eb; border-radius: 12px; padding: 8px; max-width: 100%; }
+.graph-container { text-align: center; margin: 10px 0; }
+.module-badge { display: inline-block; padding: 4px 16px; border-radius: 20px; font-weight: bold; font-size: 0.85rem; margin-bottom: 8px; }
+.module-1 { background: #fef3c7; color: #92400e; }
+.module-2 { background: #dbeafe; color: #1e40af; }
+.module-3 { background: #fce7f3; color: #9f1239; }
+.module-4 { background: #ecfdf5; color: #065f46; }
+.module-5 { background: #ede9fe; color: #5b21b6; }
+.module-6 { background: #fee2e2; color: #991b1b; }
+</style>
+</head>
+<body class="p-4 md:p-8 min-h-screen">
+
+<div class="lang-switch no-print">
+<button class="lang-btn active" onclick="setLanguage('ar')" id="btn-ar">عربي</button>
+<button class="lang-btn" onclick="setLanguage('en')" id="btn-en">EN</button>
+</div>
+
+<div id="saveIndicator" class="save-indicator">💾 <span data-ar="تم الحفظ" data-en="Saved">تم الحفظ</span></div>
+
+<div id="timer-container" class="max-w-5xl mx-auto mb-4 text-center no-print">
+<div class="bg-white p-4 rounded-2xl shadow-lg inline-block border-2 border-amber-100">
+<span class="text-gray-600 ml-2">⏰ <span data-ar="الوقت المتبقي:" data-en="Time Left:">الوقت المتبقي:</span></span>
+<span id="timer" class="text-2xl font-bold text-amber-700 font-mono">60:00</span>
+<span class="shuffle-badge">📊 <span data-ar="الأسئلة المتحيزة" data-en="Biased Questions">الأسئلة المتحيزة</span> - 30 <span data-ar="سؤال" data-en="Questions">سؤال</span></span>
+</div>
+</div>
+
+<div class="max-w-5xl mx-auto mb-6 flex flex-wrap gap-3 justify-center no-print">
+<button onclick="toggleAnswers()" class="bg-amber-700 hover:bg-amber-800 text-white px-5 py-2 rounded-xl font-medium transition shadow">👀 <span data-ar="إظهار/إخفاء الإجابات" data-en="Show/Hide Answers">إظهار/إخفاء الإجابات</span></button>
+<button onclick="window.print()" class="bg-gray-700 hover:bg-gray-900 text-white px-5 py-2 rounded-xl font-medium transition shadow">🖨️ <span data-ar="طباعة" data-en="Print">طباعة</span></button>
+<button onclick="reshuffleExam()" class="bg-gradient-to-r from-amber-700 to-orange-600 hover:from-amber-800 hover:to-orange-700 text-white px-5 py-2 rounded-xl font-medium transition shadow">🔄 <span data-ar="أسئلة جديدة" data-en="New Questions">أسئلة جديدة</span></button>
+<button onclick="clearProgress()" class="bg-red-500 hover:bg-red-600 text-white px-5 py-2 rounded-xl font-medium transition shadow">🗑️ <span data-ar="مسح التقدم" data-en="Clear Progress">مسح التقدم</span></button>
+</div>
+
+<header class="max-w-5xl mx-auto bg-white p-8 rounded-3xl shadow-2xl mb-8 border-4 border-amber-500">
+<div class="text-center">
+<div class="inline-block bg-amber-700 text-white px-6 py-2 rounded-full text-sm font-bold mb-4">MATH GRADE 12 GENERAL - QUESTION 19</div>
+<h1 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">📊 <span data-ar="إعداد دراسات إحصائية: تحديد الأسئلة المتحيزة" data-en="Designing Statistical Studies: Identifying Biased Questions">إعداد دراسات إحصائية: تحديد الأسئلة المتحيزة</span></h1>
+<h2 class="text-xl text-amber-700 font-semibold mb-2"><span data-ar="رياضيات صف 12 عام - ص 237 (مثال 3)" data-en="Grade 12 General - Page 237 (Example 3)">رياضيات صف 12 عام - ص 237 (مثال 3)</span></h2>
+<p class="text-gray-600 mb-4"><span data-ar="Biased vs Unbiased Survey Questions, Leading & Double-Barreled" data-en="Biased vs Unbiased Survey Questions, Leading & Double-Barreled">الأسئلة المتحيزة وغير المتحيزة، الأسئلة الموجهة ومزدوجة الصياغة</span></p>
+<p class="text-sm text-green-600 font-semibold">💾 <span data-ar="يتم حفظ تقدمك تلقائياً - 30 سؤالاً في 6 أقسام" data-en="Your progress is auto-saved - 30 questions in 6 sections">يتم حفظ تقدمك تلقائياً - 30 سؤالاً في 6 أقسام</span></p>
+</div>
+<div class="mt-6 flex flex-wrap justify-center gap-4 text-sm text-gray-600">
+<span>📅 <span data-ar="التاريخ:" data-en="Date:">التاريخ:</span> <input type="text" id="examDate" class="border-b-2 border-amber-300 bg-transparent w-32 text-center"></span>
+<span>😊 <span data-ar="الاسم:" data-en="Name:">الاسم:</span> <input type="text" id="studentName" class="border-b-2 border-amber-300 bg-transparent w-40 text-center" data-placeholder-ar="اكتب اسمك" data-placeholder-en="Your name" placeholder="اكتب اسمك"></span>
+<span>🏫 <span data-ar="الشعبة:" data-en="Class:">الشعبة:</span> <input type="text" id="studentClass" class="border-b-2 border-amber-300 bg-transparent w-32 text-center" data-placeholder-ar="الشعبة" data-placeholder-en="Class" placeholder="الشعبة"></span>
+<span>⏰ <span data-ar="المدة: 60 دقيقة" data-en="Duration: 60 min">المدة: 60 دقيقة</span></span>
+<span>📊 <span data-ar="المجموع: 100 درجة" data-en="Total: 100 points">المجموع: 100 درجة</span></span>
+</div>
+</header>
+
+<div class="max-w-5xl mx-auto mb-6 bg-white p-4 rounded-xl shadow-lg border-2 border-amber-200 no-print">
+<h3 class="font-bold text-lg mb-3 text-amber-800 text-center">📐 <span data-ar="قواعد تحديد تحيز الأسئلة" data-en="Rules for Identifying Question Bias">قواعد تحديد تحيز الأسئلة</span></h3>
+<div class="grid md:grid-cols-3 gap-3 text-sm">
+<div class="formula-box">
+<strong><span data-ar="سؤال متحيز (موجّه):" data-en="Biased (Leading):">سؤال متحيز (موجّه):</span></strong><br>
+<span data-ar="يشجّع على اختيار إجابة معينة" data-en="Encourages a particular answer">يشجّع على اختيار إجابة معينة</span><br>
+<span data-ar="مثل: «ألا توافق أن...؟»" data-en="e.g. 'Don't you agree...?'">مثل: «ألا توافق أن...؟»</span>
+</div>
+<div class="formula-box">
+<strong><span data-ar="سؤال متحيز (مزدوج):" data-en="Biased (Double-barreled):">سؤال متحيز (مزدوج):</span></strong><br>
+<span data-ar="يتناول أكثر من مسألة واحدة" data-en="Addresses more than one issue">يتناول أكثر من مسألة واحدة</span><br>
+<span data-ar="مثل: الطعام والخدمة معاً" data-en="e.g. food AND service together">مثل: الطعام والخدمة معاً</span>
+</div>
+<div class="formula-box">
+<strong><span data-ar="سؤال غير متحيز:" data-en="Unbiased Question:">سؤال غير متحيز:</span></strong><br>
+<span data-ar="واضح ومحايد ولا يشجّع إجابة" data-en="Clear, neutral, no encouragement">واضح ومحايد ولا يشجّع إجابة</span><br>
+<span data-ar="يتناول مسألة واحدة" data-en="Addresses one issue">يتناول مسألة واحدة</span>
+</div>
+<div class="formula-box">
+<strong><span data-ar="كلمات تحذيرية:" data-en="Warning Words:">كلمات تحذيرية:</span></strong><br>
+<span data-ar="«ألا توافق»، «أليس»، «رائع»، «سيئ»" data-en="'Don't you agree', 'Isn't', 'wonderful', 'terrible'">«ألا توافق»، «أليس»، «رائع»، «سيئ»</span>
+</div>
+<div class="formula-box">
+<strong><span data-ar="صفات السؤال الجيد:" data-en="Good Question Traits:">صفات السؤال الجيد:</span></strong><br>
+<span data-ar="واضح، محايد، مسألة واحدة، قابل للقياس" data-en="Clear, neutral, one issue, measurable">واضح، محايد، مسألة واحدة، قابل للقياس</span>
+</div>
+<div class="formula-box">
+<strong><span data-ar="أثر التحيز:" data-en="Effect of Bias:">أثر التحيز:</span></strong><br>
+<span data-ar="يشوّه النتائج ويضلل الاستنتاجات" data-en="Distorts results & misleads conclusions">يشوّه النتائج ويضلل الاستنتاجات</span>
+</div>
+</div>
+</div>
+
+<main class="max-w-5xl mx-auto space-y-8" id="exam-content"></main>
+
+<div class="text-center no-print pb-8 mt-8">
+<button onclick="gradeExam()" class="bg-gradient-to-r from-amber-700 to-orange-600 hover:from-amber-800 hover:to-orange-700 text-white text-lg px-12 py-4 rounded-2xl font-bold shadow-xl transition transform hover:scale-105">🎯 <span data-ar="صحح إجاباتي!" data-en="Grade My Exam!">صحح إجاباتي!</span></button>
+</div>
+
+<div id="results-panel" class="max-w-5xl mx-auto mt-8 bg-white p-8 rounded-3xl shadow-2xl border-4 border-amber-500 hidden no-print">
+<h2 class="text-3xl font-bold text-gray-900 mb-6 text-center">🏆 <span data-ar="نتيجتك يا بطل!" data-en="Your Result, Champion!">نتيجتك يا بطل!</span> 🏆</h2>
+<div class="grid md:grid-cols-3 gap-4 mb-6">
+<div class="bg-amber-50 p-4 rounded-xl text-center"><p>😊 <span data-ar="الاسم" data-en="Name">الاسم</span></p><p id="res-name" class="font-bold text-xl text-amber-700">-</p></div>
+<div class="bg-orange-50 p-4 rounded-xl text-center"><p>📅 <span data-ar="التاريخ" data-en="Date">التاريخ</span></p><p id="res-date" class="font-bold text-xl text-orange-700">-</p></div>
+<div class="bg-amber-50 p-4 rounded-xl text-center"><p>🌟 <span data-ar="المجموع" data-en="Total">المجموع</span></p><p id="res-total" class="font-bold text-3xl text-amber-700">0 / 100</p></div>
+</div>
+<div class="text-center mb-6">
+<span id="success-badge" class="success-badge grade-excellent">-</span>
+<p id="success-percent" class="text-4xl font-bold text-amber-700 mt-2">0%</p>
+<p class="text-sm text-gray-500"><span data-ar="نسبة النجاح" data-en="Success Rate">نسبة النجاح</span></p>
+</div>
+<div class="bg-gray-50 p-6 rounded-xl mb-6">
+<h3 class="font-bold text-lg mb-4 text-gray-800">📊 <span data-ar="أداؤك في كل قسم:" data-en="Your Performance by Section:">أداؤك في كل قسم:</span></h3>
+<div class="space-y-3" id="sections-performance"></div>
+</div>
+<div class="text-center">
+<button id="sendEmailBtn" onclick="sendResultsToEmail()" class="bg-gradient-to-r from-amber-700 to-orange-600 text-white text-lg px-8 py-3 rounded-2xl font-bold shadow-xl transition">📧 <span data-ar="أرسل النتيجة للمعلم" data-en="Send Result to Teacher">أرسل النتيجة للمعلم</span></button>
+<p id="emailStatus" class="text-sm mt-2 text-center font-medium"></p>
+</div>
+</div>
+
+<footer class="max-w-5xl mx-auto mt-10 mb-8 text-center text-gray-500 text-sm no-print">
+© Identifying Biased Questions - Grade 12 General | Mr. Mohammed Hesham 📊
+</footer>
+
+<script>
+const PUBLIC_KEY = "Rb3Lq8tXaFmc5YHUH";
+const SERVICE_ID = "service_w15m64i";
+const TEMPLATE_ID = "template_5b0u2tq";
+const TARGET_EMAIL = "mohammedhesham872@gmail.com";
+emailjs.init(PUBLIC_KEY);
+
+const STORAGE_KEY = 'biased_questions_grade12_v1';
+const TOTAL_TIME = 3600;
+const TOTAL_QUESTIONS = 30;
+const TOTAL_SECTIONS = 6;
+const QUESTIONS_PER_SECTION = 5;
+
+let currentSeed = null;
+let answersVisible = false;
+let saveIndicatorTimeout = null;
+let currentLang = 'ar';
+let timeRemaining = TOTAL_TIME;
+let timerInterval;
+let examData;
+let correctAnswersMap = {};
+let rng = null;
+
+function mulberry32(a) {
+    return function() {
+        var t = a += 0x6D2B79F5;
+        t = Math.imul(t ^ t >>> 15, t | 1);
+        t ^= t + Math.imul(t ^ t >>> 7, t | 61);
+        return ((t ^ t >>> 14) >>> 0) / 4294967296;
+    }
+}
+
+function showSaveIndicator() {
+    const indicator = document.getElementById('saveIndicator');
+    indicator.classList.add('show');
+    if (saveIndicatorTimeout) clearTimeout(saveIndicatorTimeout);
+    saveIndicatorTimeout = setTimeout(() => indicator.classList.remove('show'), 1500);
+}
+
+function saveState(showIndicator = true) {
+    try {
+        const state = {
+            seed: currentSeed, lang: currentLang,
+            studentName: document.getElementById('studentName').value,
+            studentClass: document.getElementById('studentClass').value,
+            examDate: document.getElementById('examDate').value,
+            answers: getSelectedAnswers(),
+            timeRemaining: timeRemaining,
+            answersVisible: answersVisible, savedAt: Date.now()
+        };
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+        if (showIndicator) showSaveIndicator();
+    } catch (e) { console.error('Save error:', e); }
+}
+
+function loadState() {
+    try {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        return saved ? JSON.parse(saved) : null;
+    } catch (e) { return null; }
+}
+
+function getSelectedAnswers() {
+    const answers = {};
+    for (let i = 0; i < TOTAL_QUESTIONS; i++) {
+        const selected = document.querySelector('input[name="q'+i+'"]:checked');
+        if (selected) answers[i] = selected.value;
+    }
+    return answers;
+}
+
+function restoreAnswers(answers) {
+    if (!answers) return;
+    for (const [idx, val] of Object.entries(answers)) {
+        const radio = document.querySelector('input[name="q'+idx+'"][value="'+val+'"]');
+        if (radio) radio.checked = true;
+    }
+}
+
+function clearProgress() {
+    const msg = currentLang === 'ar' ? '⚠️ هل أنت متأكد من مسح كل التقدم؟' : '⚠️ Clear all progress?';
+    if (confirm(msg)) { localStorage.removeItem(STORAGE_KEY); location.reload(); }
+}
+
+function setupAnswerListeners() {
+    document.getElementById('exam-content').addEventListener('change', (e) => {
+        if (e.target.type === 'radio') saveState();
+    });
+}
+
+function setupInputListeners() {
+    ['studentName', 'studentClass', 'examDate'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+            el.addEventListener('input', () => saveState(false));
+            el.addEventListener('blur', () => saveState());
+        }
+    });
+}
+
+// ==================== SVG DIAGRAMS ====================
+const svgGraphs = {
+    bias_types_overview: `<svg class="svg-graph" width="500" height="400" viewBox="0 0 500 400" xmlns="http://www.w3.org/2000/svg">
+        <rect x="5" y="5" width="490" height="390" rx="12" fill="#fef3c7" stroke="#f59e0b" stroke-width="2"/>
+        <text x="250" y="25" text-anchor="middle" font-size="14" fill="#92400e" font-weight="bold">📊 أنواع أسئلة الاستطلاع - Types of Survey Questions</text>
+        <rect x="20" y="45" width="150" height="140" rx="8" fill="#fee2e2" stroke="#dc2626" stroke-width="2"/>
+        <text x="95" y="65" text-anchor="middle" font-size="11" fill="#991b1b" font-weight="bold">متحيز موجّه</text>
+        <text x="95" y="82" text-anchor="middle" font-size="9" fill="#991b1b">Leading / Biased</text>
+        <text x="95" y="102" text-anchor="middle" font-size="9" fill="#991b1b">يشجّع إجابة معينة</text>
+        <text x="95" y="120" text-anchor="middle" font-size="9" fill="#991b1b">«ألا توافق أن...؟»</text>
+        <text x="95" y="140" text-anchor="middle" font-size="16">👉</text>
+        <text x="95" y="160" text-anchor="middle" font-size="8" fill="#991b1b">«Do you agree that...?»</text>
+        <text x="95" y="176" text-anchor="middle" font-size="8" fill="#991b1b">pushes one answer</text>
+        <rect x="175" y="45" width="150" height="140" rx="8" fill="#fee2e2" stroke="#dc2626" stroke-width="2"/>
+        <text x="250" y="65" text-anchor="middle" font-size="11" fill="#991b1b" font-weight="bold">متحيز مزدوج</text>
+        <text x="250" y="82" text-anchor="middle" font-size="9" fill="#991b1b">Double-barreled</text>
+        <text x="250" y="102" text-anchor="middle" font-size="9" fill="#991b1b">أكثر من مسألة واحدة</text>
+        <text x="250" y="120" text-anchor="middle" font-size="9" fill="#991b1b">«الطعام والخدمة؟»</text>
+        <text x="250" y="140" text-anchor="middle" font-size="16">➕➕</text>
+        <text x="250" y="160" text-anchor="middle" font-size="8" fill="#991b1b">Two issues in one</text>
+        <text x="250" y="176" text-anchor="middle" font-size="8" fill="#991b1b">ambiguous answer</text>
+        <rect x="330" y="45" width="150" height="140" rx="8" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+        <text x="405" y="65" text-anchor="middle" font-size="11" fill="#166534" font-weight="bold">غير متحيز ✓</text>
+        <text x="405" y="82" text-anchor="middle" font-size="9" fill="#166534">Unbiased</text>
+        <text x="405" y="102" text-anchor="middle" font-size="9" fill="#166534">واضح ومحايد</text>
+        <text x="405" y="120" text-anchor="middle" font-size="9" fill="#166534">مسألة واحدة</text>
+        <text x="405" y="140" text-anchor="middle" font-size="16">✅</text>
+        <text x="405" y="160" text-anchor="middle" font-size="8" fill="#166534">«كم كوب ماء تشرب؟»</text>
+        <text x="405" y="176" text-anchor="middle" font-size="8" fill="#166534">neutral & clear</text>
+        <rect x="20" y="200" width="460" height="90" rx="6" fill="#fde68a" stroke="#f59e0b" stroke-width="2"/>
+        <text x="250" y="220" text-anchor="middle" font-size="11" fill="#92400e" font-weight="bold">🔍 كيف تحكم؟ (How to judge?)</text>
+        <text x="250" y="240" text-anchor="middle" font-size="10" fill="#92400e">1) هل الصياغة تدفع لإجابة معينة؟ → متحيز موجّه</text>
+        <text x="250" y="258" text-anchor="middle" font-size="10" fill="#92400e">2) هل يسأل عن شيئين في آن واحد؟ → متحيز مزدوج</text>
+        <text x="250" y="276" text-anchor="middle" font-size="10" fill="#92400e">3) غير ذلك وواضح → غير متحيز</text>
+        <rect x="20" y="300" width="460" height="85" rx="6" fill="#fef3c7" stroke="#f59e0b" stroke-width="2"/>
+        <text x="250" y="320" text-anchor="middle" font-size="11" fill="#92400e" font-weight="bold">📝 أمثلة من الامتحان:</text>
+        <text x="250" y="340" text-anchor="middle" font-size="10" fill="#92400e">Q76: «لا توافق على وجوب تقديم طعام صحي؟» → متحيز موجّه</text>
+        <text x="250" y="358" text-anchor="middle" font-size="10" fill="#92400e">Q77: «ما مقدار ممارستك للتمارين؟» → غير متحيز</text>
+        <text x="250" y="376" text-anchor="middle" font-size="10" fill="#92400e">Q79: «أكشن أم وثائقية؟» → متحيز (مسألتان)</text>
+    </svg>`,
+    
+    q76_analysis: `<svg class="svg-graph" width="500" height="320" viewBox="0 0 500 320" xmlns="http://www.w3.org/2000/svg">
+        <rect x="5" y="5" width="490" height="310" rx="12" fill="#fee2e2" stroke="#dc2626" stroke-width="2"/>
+        <text x="250" y="25" text-anchor="middle" font-size="14" fill="#991b1b" font-weight="bold">🔍 تحليل السؤال 76 - Question 76 Analysis</text>
+        <rect x="60" y="45" width="380" height="60" rx="12" fill="#fecaca" stroke="#dc2626" stroke-width="2"/>
+        <text x="250" y="70" text-anchor="middle" font-size="11" fill="#991b1b" font-weight="bold">«لا توافق على وجوب تقديم الكافتيريا لطعام صحي؟»</text>
+        <text x="250" y="90" text-anchor="middle" font-size="10" fill="#991b1b">"Don't you agree the cafeteria should serve healthy food?"</text>
+        <path d="M 250 105 L 250 130" stroke="#dc2626" stroke-width="2" marker-end="url(#arrow76)"/>
+        <rect x="60" y="135" width="380" height="70" rx="8" fill="#fef3c7" stroke="#f59e0b" stroke-width="2"/>
+        <text x="250" y="155" text-anchor="middle" font-size="11" fill="#92400e" font-weight="bold">💡 لماذا هو متحيز؟ (Why biased?)</text>
+        <text x="250" y="175" text-anchor="middle" font-size="10" fill="#92400e">كلمة «صحي» إيجابية جداً → من سيرفض الطعام الصحي؟</text>
+        <text x="250" y="193" text-anchor="middle" font-size="10" fill="#92400e">The word "healthy" is very positive → who would refuse?</text>
+        <rect x="60" y="215" width="380" height="45" rx="8" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+        <text x="250" y="235" text-anchor="middle" font-size="11" fill="#166534" font-weight="bold">✓ الصياغة المحايدة البديلة:</text>
+        <text x="250" y="252" text-anchor="middle" font-size="10" fill="#166534">«ما رأيك في الطعام المقدَّم في الكافتيريا؟»</text>
+        <rect x="60" y="270" width="380" height="35" rx="8" fill="#fecaca" stroke="#dc2626" stroke-width="2"/>
+        <text x="250" y="292" text-anchor="middle" font-size="11" fill="#991b1b" font-weight="bold">الإجابة: a) متحيز؛ لأنه يشجّع على اختيار إجابة معينة</text>
+        <defs><marker id="arrow76" markerWidth="10" markerHeight="10" refX="5" refY="9" orient="auto"><path d="M0,0 L10,0 L5,9 z" fill="#dc2626"/></marker></defs>
+    </svg>`,
+    
+    q79_double: `<svg class="svg-graph" width="500" height="320" viewBox="0 0 500 320" xmlns="http://www.w3.org/2000/svg">
+        <rect x="5" y="5" width="490" height="310" rx="12" fill="#fce7f3" stroke="#ec4899" stroke-width="2"/>
+        <text x="250" y="25" text-anchor="middle" font-size="14" fill="#9f1239" font-weight="bold">✂️ السؤال المزدوج - Double-Barreled Question (Q79)</text>
+        <rect x="60" y="45" width="380" height="55" rx="12" fill="#fbcfe8" stroke="#ec4899" stroke-width="2"/>
+        <text x="250" y="68" text-anchor="middle" font-size="11" fill="#9f1239" font-weight="bold">«هل تفضّل مشاهدة أفلام الحركة المشوّقة أم الأفلام الوثائقية المملّة؟»</text>
+        <text x="250" y="88" text-anchor="middle" font-size="9" fill="#9f1239">Two issues + loaded adjectives in ONE question</text>
+        <line x1="250" y1="100" x2="150" y2="130" stroke="#ec4899" stroke-width="2"/>
+        <line x1="250" y1="100" x2="350" y2="130" stroke="#ec4899" stroke-width="2"/>
+        <text x="250" y="120" text-anchor="middle" font-size="16">✂️</text>
+        <rect x="40" y="135" width="200" height="60" rx="8" fill="#fef3c7" stroke="#f59e0b" stroke-width="2"/>
+        <text x="140" y="158" text-anchor="middle" font-size="10" fill="#92400e" font-weight="bold">المسألة 1: أفلام الحركة</text>
+        <text x="140" y="178" text-anchor="middle" font-size="9" fill="#92400e">Issue 1: Action movies</text>
+        <rect x="260" y="135" width="200" height="60" rx="8" fill="#fef3c7" stroke="#f59e0b" stroke-width="2"/>
+        <text x="360" y="158" text-anchor="middle" font-size="10" fill="#92400e" font-weight="bold">المسألة 2: الأفلام الوثائقية</text>
+        <text x="360" y="178" text-anchor="middle" font-size="9" fill="#92400e">Issue 2: Documentaries</text>
+        <rect x="60" y="210" width="380" height="55" rx="8" fill="#fee2e2" stroke="#dc2626" stroke-width="2"/>
+        <text x="250" y="230" text-anchor="middle" font-size="10" fill="#991b1b" font-weight="bold">⚠️ المشكلة: من يحب النوعين أو لا يحب أياً منهما لا يستطيع الإجابة!</text>
+        <text x="250" y="250" text-anchor="middle" font-size="9" fill="#991b1b">Someone who likes both (or neither) cannot answer clearly</text>
+        <rect x="60" y="275" width="380" height="35" rx="8" fill="#fecaca" stroke="#dc2626" stroke-width="2"/>
+        <text x="250" y="297" text-anchor="middle" font-size="11" fill="#991b1b" font-weight="bold">الإجابة: c) متحيز؛ لأنه يتناول أكثر من مسألة واحدة</text>
+    </svg>`,
+    
+    neutral_checklist: `<svg class="svg-graph" width="500" height="340" viewBox="0 0 500 340" xmlns="http://www.w3.org/2000/svg">
+        <rect x="5" y="5" width="490" height="330" rx="12" fill="#ecfdf5" stroke="#10b981" stroke-width="2"/>
+        <text x="250" y="25" text-anchor="middle" font-size="14" fill="#065f46" font-weight="bold">✅ قائمة فحص السؤال غير المتحيز</text>
+        <rect x="30" y="50" width="440" height="40" rx="8" fill="#d1fae5" stroke="#10b981" stroke-width="2"/>
+        <text x="60" y="75" font-size="14" fill="#16a34a" font-weight="bold">✓</text>
+        <text x="90" y="75" font-size="11" fill="#065f46">واضح ومباشر ولا يحتوي كلمات إيحائية</text>
+        <rect x="30" y="100" width="440" height="40" rx="8" fill="#d1fae5" stroke="#10b981" stroke-width="2"/>
+        <text x="60" y="125" font-size="14" fill="#16a34a" font-weight="bold">✓</text>
+        <text x="90" y="125" font-size="11" fill="#065f46">يتناول مسألة واحدة فقط</text>
+        <rect x="30" y="150" width="440" height="40" rx="8" fill="#d1fae5" stroke="#10b981" stroke-width="2"/>
+        <text x="60" y="175" font-size="14" fill="#16a34a" font-weight="bold">✓</text>
+        <text x="90" y="175" font-size="11" fill="#065f46">لا يشجّع على إجابة معينة (محايد)</text>
+        <rect x="30" y="200" width="440" height="40" rx="8" fill="#d1fae5" stroke="#10b981" stroke-width="2"/>
+        <text x="60" y="225" font-size="14" fill="#16a34a" font-weight="bold">✓</text>
+        <text x="90" y="225" font-size="11" fill="#065f46">قابل للقياس أو الإجابة بدقة</text>
+        <rect x="30" y="255" width="440" height="70" rx="8" fill="#fef3c7" stroke="#f59e0b" stroke-width="2"/>
+        <text x="250" y="278" text-anchor="middle" font-size="11" fill="#92400e" font-weight="bold">أمثلة غير متحيزة (Q77, Q78):</text>
+        <text x="250" y="298" text-anchor="middle" font-size="10" fill="#92400e">«ما مقدار ممارستك للتمارين الرياضية؟»</text>
+        <text x="250" y="316" text-anchor="middle" font-size="10" fill="#92400e">«كم كأسًا من الماء تشرب يوميًا؟»</text>
+    </svg>`,
+    
+    rewrite_flow: `<svg class="svg-graph" width="500" height="360" viewBox="0 0 500 360" xmlns="http://www.w3.org/2000/svg">
+        <rect x="5" y="5" width="490" height="350" rx="12" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+        <text x="250" y="25" text-anchor="middle" font-size="14" fill="#1e40af" font-weight="bold">🔄 إعادة صياغة الأسئلة المتحيزة</text>
+        <rect x="20" y="45" width="210" height="55" rx="8" fill="#fee2e2" stroke="#dc2626" stroke-width="2"/>
+        <text x="125" y="68" text-anchor="middle" font-size="9" fill="#991b1b" font-weight="bold">✗ «ألا توافق أن الواجب مرهق؟»</text>
+        <text x="125" y="86" text-anchor="middle" font-size="8" fill="#991b1b">Don't you agree homework is burdensome?</text>
+        <path d="M 235 72 L 265 72" stroke="#2563eb" stroke-width="2" marker-end="url(#arrowRW)"/>
+        <rect x="270" y="45" width="210" height="55" rx="8" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+        <text x="375" y="68" text-anchor="middle" font-size="9" fill="#166534" font-weight="bold">✓ «كم ساعة تقضي في الواجب يوميًا؟»</text>
+        <text x="375" y="86" text-anchor="middle" font-size="8" fill="#166534">How many hours do you spend on homework?</text>
+        <rect x="20" y="115" width="210" height="55" rx="8" fill="#fee2e2" stroke="#dc2626" stroke-width="2"/>
+        <text x="125" y="138" text-anchor="middle" font-size="9" fill="#991b1b" font-weight="bold">✗ «ما رأيك بالطعام والخدمة؟»</text>
+        <text x="125" y="156" text-anchor="middle" font-size="8" fill="#991b1b">Food AND service in one question?</text>
+        <path d="M 235 142 L 265 142" stroke="#2563eb" stroke-width="2" marker-end="url(#arrowRW)"/>
+        <rect x="270" y="115" width="210" height="55" rx="8" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+        <text x="375" y="135" text-anchor="middle" font-size="9" fill="#166534" font-weight="bold">✓ سؤالان منفصلان:</text>
+        <text x="375" y="150" text-anchor="middle" font-size="8" fill="#166534">1) What about the food?</text>
+        <text x="375" y="163" text-anchor="middle" font-size="8" fill="#166534">2) What about the service?</text>
+        <rect x="20" y="185" width="210" height="55" rx="8" fill="#fee2e2" stroke="#dc2626" stroke-width="2"/>
+        <text x="125" y="208" text-anchor="middle" font-size="9" fill="#991b1b" font-weight="bold">✗ «هل تؤيد السياسة الرائعة؟»»</text>
+        <text x="125" y="226" text-anchor="middle" font-size="8" fill="#991b1b">Loaded word "wonderful"</text>
+        <path d="M 235 212 L 265 212" stroke="#2563eb" stroke-width="2" marker-end="url(#arrowRW)"/>
+        <rect x="270" y="185" width="210" height="55" rx="8" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+        <text x="375" y="208" text-anchor="middle" font-size="9" fill="#166534" font-weight="bold">✓ «ما رأيك في السياسة الجديدة؟»</text>
+        <text x="375" y="226" text-anchor="middle" font-size="8" fill="#166534">Neutral wording, no adjectives</text>
+        <rect x="20" y="255" width="460" height="90" rx="8" fill="#fef3c7" stroke="#f59e0b" stroke-width="2"/>
+        <text x="250" y="278" text-anchor="middle" font-size="11" fill="#92400e" font-weight="bold">🔑 قواعد إعادة الصياغة:</text>
+        <text x="250" y="298" text-anchor="middle" font-size="10" fill="#92400e">1) احذف الكلمات الإيحائية (رائع، سيئ، ألا توافق)</text>
+        <text x="250" y="316" text-anchor="middle" font-size="10" fill="#92400e">2) قسّم السؤال المزدوج إلى سؤالين</text>
+        <text x="250" y="334" text-anchor="middle" font-size="10" fill="#92400e">3) استخدم صياغة قياس محايدة (كم؟ ما رأيك؟)</text>
+        <defs><marker id="arrowRW" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#2563eb"/></marker></defs>
+    </svg>`,
+    
+    bias_effects: `<svg class="svg-graph" width="500" height="300" viewBox="0 0 500 300" xmlns="http://www.w3.org/2000/svg">
+        <rect x="5" y="5" width="490" height="290" rx="12" fill="#ede9fe" stroke="#7c3aed" stroke-width="2"/>
+        <text x="250" y="25" text-anchor="middle" font-size="14" fill="#5b21b6" font-weight="bold">⚠️ أثر الأسئلة المتحيزة على الدراسة</text>
+        <rect x="30" y="50" width="130" height="70" rx="8" fill="#ddd6fe" stroke="#7c3aed" stroke-width="2"/>
+        <text x="95" y="78" text-anchor="middle" font-size="10" fill="#5b21b6" font-weight="bold">سؤال متحيز</text>
+        <text x="95" y="98" text-anchor="middle" font-size="9" fill="#5b21b6">Biased question</text>
+        <path d="M 165 85 L 195 85" stroke="#7c3aed" stroke-width="2" marker-end="url(#arrowBE)"/>
+        <rect x="200" y="50" width="130" height="70" rx="8" fill="#ddd6fe" stroke="#7c3aed" stroke-width="2"/>
+        <text x="265" y="78" text-anchor="middle" font-size="10" fill="#5b21b6" font-weight="bold">إجابات مشوّهة</text>
+        <text x="265" y="98" text-anchor="middle" font-size="9" fill="#5b21b6">Distorted responses</text>
+        <path d="M 335 85 L 365 85" stroke="#7c3aed" stroke-width="2" marker-end="url(#arrowBE)"/>
+        <rect x="370" y="50" width="110" height="70" rx="8" fill="#fee2e2" stroke="#dc2626" stroke-width="2"/>
+        <text x="425" y="78" text-anchor="middle" font-size="10" fill="#991b1b" font-weight="bold">استنتاج خاطئ</text>
+        <text x="425" y="98" text-anchor="middle" font-size="9" fill="#991b1b">Wrong conclusion</text>
+        <rect x="30" y="140" width="440" height="70" rx="8" fill="#fef3c7" stroke="#f59e0b" stroke-width="2"/>
+        <text x="250" y="163" text-anchor="middle" font-size="11" fill="#92400e" font-weight="bold">💡 مثال:</text>
+        <text x="250" y="183" text-anchor="middle" font-size="10" fill="#92400e">«ألا توافق أن المطعم ممتاز؟» → 95% يوافقون (مشوّه)</text>
+        <text x="250" y="200" text-anchor="middle" font-size="10" fill="#92400e">«ما تقييمك للمطعم من 1-5؟» → نتائج حقيقية</text>
+        <rect x="30" y="225" width="440" height="55" rx="8" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+        <text x="250" y="248" text-anchor="middle" font-size="11" fill="#166534" font-weight="bold">🔑 الخلاصة: حيادية السؤال = مصداقية النتائج</text>
+        <text x="250" y="268" text-anchor="middle" font-size="10" fill="#166534">Neutral questions = credible results</text>
+        <defs><marker id="arrowBE" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#7c3aed"/></marker></defs>
+    </svg>`,
+    
+    study_design: `<svg class="svg-graph" width="500" height="340" viewBox="0 0 500 340" xmlns="http://www.w3.org/2000/svg">
+        <rect x="5" y="5" width="490" height="330" rx="12" fill="#fef3c7" stroke="#f59e0b" stroke-width="2"/>
+        <text x="250" y="25" text-anchor="middle" font-size="14" fill="#92400e" font-weight="bold">📋 عناصر الدراسة الإحصائية الجيدة</text>
+        <rect x="20" y="45" width="145" height="90" rx="8" fill="#fde68a" stroke="#f59e0b" stroke-width="2"/>
+        <text x="92" y="68" text-anchor="middle" font-size="11" fill="#92400e" font-weight="bold">1) أسئلة محايدة</text>
+        <text x="92" y="88" text-anchor="middle" font-size="9" fill="#92400e">واضحة، مسألة واحدة</text>
+        <text x="92" y="105" text-anchor="middle" font-size="9" fill="#92400e">لا تشجّع إجابة</text>
+        <text x="92" y="122" text-anchor="middle" font-size="9" fill="#92400e">Neutral questions</text>
+        <rect x="177" y="45" width="145" height="90" rx="8" fill="#fde68a" stroke="#f59e0b" stroke-width="2"/>
+        <text x="250" y="68" text-anchor="middle" font-size="11" fill="#92400e" font-weight="bold">2) عينة عشوائية</text>
+        <text x="250" y="88" text-anchor="middle" font-size="9" fill="#92400e">تمثل المجتمع</text>
+        <text x="250" y="105" text-anchor="middle" font-size="9" fill="#92400e">فرص متساوية</text>
+        <text x="250" y="122" text-anchor="middle" font-size="9" fill="#92400e">Random sample</text>
+        <rect x="334" y="45" width="145" height="90" rx="8" fill="#fde68a" stroke="#f59e0b" stroke-width="2"/>
+        <text x="406" y="68" text-anchor="middle" font-size="11" fill="#92400e" font-weight="bold">3) تصميم مناسب</text>
+        <text x="406" y="88" text-anchor="middle" font-size="9" fill="#92400e">نوع الدراسة صحيح</text>
+        <text x="406" y="105" text-anchor="middle" font-size="9" fill="#92400e">(تجربة/رصدية/استطلاع)</text>
+        <text x="406" y="122" text-anchor="middle" font-size="9" fill="#92400e">Proper design</text>
+        <rect x="20" y="150" width="460" height="80" rx="8" fill="#fee2e2" stroke="#dc2626" stroke-width="2"/>
+        <text x="250" y="173" text-anchor="middle" font-size="11" fill="#991b1b" font-weight="bold">⚠️ مصادر التحيز الشائعة:</text>
+        <text x="250" y="193" text-anchor="middle" font-size="10" fill="#991b1b">أسئلة موجّهة أو مزدوجة • عينة ملائمة أو متطوعين • صياغة إيحائية</text>
+        <text x="250" y="213" text-anchor="middle" font-size="10" fill="#991b1b">Leading/double questions • Convenience/voluntary samples • Loaded words</text>
+        <rect x="20" y="245" width="460" height="80" rx="8" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+        <text x="250" y="268" text-anchor="middle" font-size="11" fill="#166534" font-weight="bold">✓ checklist قبل إطلاق الاستطلاع:</text>
+        <text x="250" y="288" text-anchor="middle" font-size="10" fill="#166534">هل كل سؤال واضح؟ مسألة واحدة؟ محايد؟ العينة عشوائية؟</text>
+        <text x="250" y="308" text-anchor="middle" font-size="10" fill="#166534">Clear? One issue? Neutral? Random sample?</text>
+    </svg>`
+};
+
+// ==================== EXAM DATA - 30 QUESTIONS ====================
+const originalExamData = {
+    sections: [
+        {
+            id: 'sec1',
+            title: { ar: '🔹 القسم 1: أسئلة متحيزة موجّهة (مثل Q76) (Q1-Q5)', en: '🔹 Section 1: Leading Biased Questions (like Q76) (Q1-Q5)' },
+            questions: [
+                {
+                    q: { ar: '<strong>السؤال 1 (مثل السؤال 76):</strong> حدّد ما إذا كان سؤال الاستطلاع الآتي متحيزًا أم غير متحيز: «لا توافق على وجوب تقديم الكافتيريا لطعام صحي؟»', en: '<strong>Question 1 (like Q76):</strong> Determine if the survey question is biased or unbiased: "Don\'t you agree that the cafeteria should serve healthy food?"' },
+                    svg: svgGraphs.q76_analysis,
+                    options: [
+                        { ar: 'متحيز؛ لأنه يشجّع على اختيار إجابة معينة', en: 'Biased; because it encourages choosing a particular answer' },
+                        { ar: 'غير متحيز؛ لأنه واضح ولا يشجّع على إجابة معينة', en: 'Unbiased; because it is clear and does not encourage a particular answer' },
+                        { ar: 'متحيز؛ لأنه يتناول أكثر من مسألة واحدة', en: 'Biased; because it addresses more than one issue' },
+                        { ar: 'غير متحيز؛ لأنه يتناول أكثر من مسألة واحدة', en: 'Unbiased; because it addresses more than one issue' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 'صيغة «لا توافق...» مع كلمة «صحي» الإيجابية تدفع المستجيب للموافقة → سؤال متحيز موجّه', en: 'The phrasing "Don\'t you agree..." with the positive word "healthy" pushes respondents to agree → leading biased question' }
+                },
+                {
+                    q: { ar: '<strong>السؤال 2:</strong> حدّد نوع السؤال: «ألا تعتقد أن اليوم الدراسي طويل جداً؟»', en: '<strong>Question 2:</strong> Determine the type: "Don\'t you think the school day is too long?"' },
+                    options: [
+                        { ar: 'متحيز؛ لأنه يشجّع على اختيار إجابة معينة', en: 'Biased; because it encourages a particular answer' },
+                        { ar: 'غير متحيز؛ لأنه واضح ومحايد', en: 'Unbiased; because it is clear and neutral' },
+                        { ar: 'متحيز؛ لأنه يتناول أكثر من مسألة', en: 'Biased; because it addresses more than one issue' },
+                        { ar: 'غير متحيز؛ لأنه سؤال مغلق', en: 'Unbiased; because it is a closed question' }
+                    ],
+                    correct: 0,
+                    answer: { ar: '«ألا تعتقد» + «طويل جداً» صياغة موجّهة تدفع للموافقة → متحيز', en: '"Don\'t you think" + "too long" is leading wording pushing agreement → biased' }
+                },
+                {
+                    q: { ar: '<strong>السؤال 3:</strong> حدّد نوع السؤال: «هل تؤيد السياسة المدرسية الرائعة الجديدة؟»', en: '<strong>Question 3:</strong> Determine the type: "Do you support the wonderful new school policy?"' },
+                    options: [
+                        { ar: 'غير متحيز؛ لأنه واضح', en: 'Unbiased; because it is clear' },
+                        { ar: 'متحيز؛ لأنه يشجّع على اختيار إجابة معينة', en: 'Biased; because it encourages a particular answer' },
+                        { ar: 'متحيز؛ لأنه يتناول أكثر من مسألة', en: 'Biased; because it addresses more than one issue' },
+                        { ar: 'غير متحيز؛ لأنه يستهدف عينة عشوائية', en: 'Unbiased; because it targets a random sample' }
+                    ],
+                    correct: 1,
+                    answer: { ar: 'كلمة «الرائعة» وصف إيحائي إيجابي يشجّع الموافقة → متحيز موجّه', en: 'The word "wonderful" is a positive loaded adjective encouraging agreement → leading biased' }
+                },
+                {
+                    q: { ar: '<strong>السؤال 4:</strong> حدّد نوع السؤال: «ألا توافق على أن التدخين عادة سيئة يجب منعها؟»', en: '<strong>Question 4:</strong> Determine the type: "Don\'t you agree that smoking is a bad habit that should be banned?"' },
+                    options: [
+                        { ar: 'متحيز؛ لأنه يشجّع على اختيار إجابة معينة', en: 'Biased; because it encourages a particular answer' },
+                        { ar: 'غير متحيز؛ لأنه واضح ولا يشجّع إجابة', en: 'Unbiased; because it is clear and does not encourage' },
+                        { ar: 'غير متحيز؛ لأنه يتناول مسألة واحدة', en: 'Unbiased; because it addresses one issue' },
+                        { ar: 'متحيز؛ لأنه يستبعد فئة من المجتمع', en: 'Biased; because it excludes a group' }
+                    ],
+                    correct: 0,
+                    answer: { ar: '«ألا توافق» + «سيئة» صياغة موجّهة تجعل الرفض محرجاً → متحيز', en: '"Don\'t you agree" + "bad" is leading wording making disagreement awkward → biased' }
+                },
+                {
+                    q: { ar: '<strong>السؤال 5:</strong> حدّد نوع السؤال: «هل توافق على أن المدينة يجب أن تبني مزيداً من الحدائق لصحة أطفالنا؟»', en: '<strong>Question 5:</strong> Determine the type: "Do you agree the city should build more parks for our children\'s health?"' },
+                    options: [
+                        { ar: 'غير متحيز؛ لأنه سؤال مهم', en: 'Unbiased; because it is an important question' },
+                        { ar: 'متحيز؛ لأنه يشجّع على اختيار إجابة معينة', en: 'Biased; because it encourages a particular answer' },
+                        { ar: 'غير متحيز؛ لأنه واضح', en: 'Unbiased; because it is clear' },
+                        { ar: 'متحيز؛ لأنه مزدوج الصياغة', en: 'Biased; because it is double-barreled' }
+                    ],
+                    correct: 1,
+                    answer: { ar: 'ربط الحدائق بـ«صحة أطفالنا» نداء عاطفي يشجّع الموافقة → متحيز موجّه', en: 'Linking parks to "our children\'s health" is an emotional appeal encouraging agreement → leading biased' }
+                }
+            ]
+        },
+        {
+            id: 'sec2',
+            title: { ar: '🔹 القسم 2: أسئلة غير متحيزة (مثل Q77، Q78) (Q6-Q10)', en: '🔹 Section 2: Unbiased Questions (like Q77, Q78) (Q6-Q10)' },
+            questions: [
+                {
+                    q: { ar: '<strong>السؤال 6 (مثل السؤال 77):</strong> حدّد ما إذا كان سؤال الاستطلاع الآتي متحيزًا أم غير متحيز: «ما مقدار ممارستك للتمارين الرياضية؟»', en: '<strong>Question 6 (like Q77):</strong> Determine if biased or unbiased: "How much do you practice sports exercises?"' },
+                    svg: svgGraphs.neutral_checklist,
+                    options: [
+                        { ar: 'متحيز؛ لأنه يشجّع على اختيار إجابة معينة', en: 'Biased; because it encourages a particular answer' },
+                        { ar: 'متحيز؛ لأنه يتناول أكثر من مسألة واحدة', en: 'Biased; because it addresses more than one issue' },
+                        { ar: 'غير متحيز؛ لأنه يتناول أكثر من مسألة واحدة', en: 'Unbiased; because it addresses more than one issue' },
+                        { ar: 'غير متحيز؛ لأنه واضح ولا يشجّع على إجابة معينة', en: 'Unbiased; because it is clear and does not encourage a particular answer' }
+                    ],
+                    correct: 3,
+                    answer: { ar: 'السؤال محايد ويقيس مقداراً بدون إيحاء، ويتناول مسألة واحدة → غير متحيز', en: 'The question is neutral, measures an amount without suggestion, one issue → unbiased' }
+                },
+                {
+                    q: { ar: '<strong>السؤال 7 (مثل السؤال 78):</strong> حدّد نوع السؤال: «كم كأسًا من الماء تشرب يوميًا؟»', en: '<strong>Question 7 (like Q78):</strong> Determine the type: "How many glasses of water do you drink daily?"' },
+                    options: [
+                        { ar: 'متحيز؛ لأنه يشجّع على اختيار إجابة معينة', en: 'Biased; because it encourages a particular answer' },
+                        { ar: 'متحيز؛ لأنه يتناول أكثر من مسألة واحدة', en: 'Biased; because it addresses more than one issue' },
+                        { ar: 'غير متحيز؛ لأنه واضح ولا يشجّع على إجابة معينة', en: 'Unbiased; because it is clear and does not encourage a particular answer' },
+                        { ar: 'غير متحيز؛ لأنه يتناول أكثر من مسألة واحدة', en: 'Unbiased; because it addresses more than one issue' }
+                    ],
+                    correct: 2,
+                    answer: { ar: 'سؤال قياس محايد وواضح ومسألة واحدة → غير متحيز', en: 'Neutral measurement question, clear, one issue → unbiased' }
+                },
+                {
+                    q: { ar: '<strong>السؤال 8:</strong> حدّد نوع السؤال: «كم ساعة تنام كل ليلة؟»', en: '<strong>Question 8:</strong> Determine the type: "How many hours do you sleep each night?"' },
+                    options: [
+                        { ar: 'متحيز؛ لأنه موجّه', en: 'Biased; because it is leading' },
+                        { ar: 'غير متحيز؛ لأنه واضح ولا يشجّع على إجابة معينة', en: 'Unbiased; because it is clear and does not encourage a particular answer' },
+                        { ar: 'متحيز؛ لأنه مزدوج', en: 'Biased; because it is double-barreled' },
+                        { ar: 'غير متحيز؛ لأنه يتناول مسألتين', en: 'Unbiased; because it addresses two issues' }
+                    ],
+                    correct: 1,
+                    answer: { ar: 'سؤال كمي محايد، مسألة واحدة، بدون كلمات إيحائية → غير متحيز', en: 'Quantitative neutral question, one issue, no loaded words → unbiased' }
+                },
+                {
+                    q: { ar: '<strong>السؤال 9:</strong> حدّد نوع السؤال: «ما مادتك الدراسية المفضلة؟»', en: '<strong>Question 9:</strong> Determine the type: "What is your favorite school subject?"' },
+                    options: [
+                        { ar: 'متحيز؛ لأنه يشجّع إجابة معينة', en: 'Biased; because it encourages a particular answer' },
+                        { ar: 'متحيز؛ لأنه يتناول أكثر من مسألة', en: 'Biased; because it addresses more than one issue' },
+                        { ar: 'غير متحيز؛ لأنه واضح ولا يشجّع على إجابة معينة', en: 'Unbiased; because it is clear and does not encourage a particular answer' },
+                        { ar: 'غير متحيز؛ لأنه مفتوح فقط', en: 'Unbiased; because it is open only' }
+                    ],
+                    correct: 2,
+                    answer: { ar: 'سؤال تفضيل محايد لا يوحي بأي إجابة → غير متحيز', en: 'Neutral preference question with no suggested answer → unbiased' }
+                },
+                {
+                    q: { ar: '<strong>السؤال 10:</strong> حدّد نوع السؤال: «كم دقيقة تستغرق للوصول إلى المدرسة؟»', en: '<strong>Question 10:</strong> Determine the type: "How many minutes does it take you to get to school?"' },
+                    options: [
+                        { ar: 'غير متحيز؛ لأنه واضح ولا يشجّع على إجابة معينة', en: 'Unbiased; because it is clear and does not encourage a particular answer' },
+                        { ar: 'متحيز؛ لأنه يشجّع إجابة معينة', en: 'Biased; because it encourages a particular answer' },
+                        { ar: 'متحيز؛ لأنه مزدوج الصياغة', en: 'Biased; because it is double-barreled' },
+                        { ar: 'غير متحيز؛ لأنه يتناول أكثر من مسألة', en: 'Unbiased; because it addresses more than one issue' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 'سؤال قياس زمني محايد وواضح → غير متحيز', en: 'Neutral clear time-measurement question → unbiased' }
+                }
+            ]
+        },
+        {
+            id: 'sec3',
+            title: { ar: '🔹 القسم 3: أسئلة مزدوجة الصياغة (مثل Q79) (Q11-Q15)', en: '🔹 Section 3: Double-Barreled Questions (like Q79) (Q11-Q15)' },
+            questions: [
+                {
+                    q: { ar: '<strong>السؤال 11 (مثل السؤال 79):</strong> حدّد ما إذا كان سؤال الاستطلاع الآتي متحيزًا أم غير متحيز: «هل تفضّل مشاهدة أفلام الحركة المشوّقة أم الأفلام الوثائقية المملّة؟»', en: '<strong>Question 11 (like Q79):</strong> Determine if biased or unbiased: "Do you prefer watching exciting action movies or boring documentary movies?"' },
+                    svg: svgGraphs.q79_double,
+                    options: [
+                        { ar: 'متحيز؛ لأنه يشجّع على اختيار إجابة معينة', en: 'Biased; because it encourages a particular answer' },
+                        { ar: 'غير متحيز؛ لأنه واضح ولا يشجّع على إجابة معينة', en: 'Unbiased; because it is clear and does not encourage a particular answer' },
+                        { ar: 'متحيز؛ لأنه يتناول أكثر من مسألة واحدة', en: 'Biased; because it addresses more than one issue' },
+                        { ar: 'غير متحيز؛ لأنه يتناول أكثر من مسألة واحدة', en: 'Unbiased; because it addresses more than one issue' }
+                    ],
+                    correct: 2,
+                    answer: { ar: 'السؤال يدمج تفضيلين (حركة ووثائقية) مع صفات إيحائية في سؤال واحد → متحيز لأنه يتناول أكثر من مسألة', en: 'The question merges two preferences (action & documentary) with loaded adjectives in one question → biased for addressing more than one issue' }
+                },
+                {
+                    q: { ar: '<strong>السؤال 12:</strong> حدّد نوع السؤال: «هل تؤيد زيادة الضرائب وتحسين التعليم؟»', en: '<strong>Question 12:</strong> Determine the type: "Do you support raising taxes and improving education?"' },
+                    options: [
+                        { ar: 'غير متحيز؛ لأنه واضح', en: 'Unbiased; because it is clear' },
+                        { ar: 'متحيز؛ لأنه يتناول أكثر من مسألة واحدة', en: 'Biased; because it addresses more than one issue' },
+                        { ar: 'متحيز؛ لأنه يشجّع إجابة معينة فقط', en: 'Biased; because it only encourages a particular answer' },
+                        { ar: 'غير متحيز؛ لأنه سؤال نعم/لا', en: 'Unbiased; because it is yes/no' }
+                    ],
+                    correct: 1,
+                    answer: { ar: 'مسألتان مستقلتان (الضرائب والتعليم) في سؤال واحد؛ قد يؤيد أحدهما دون الآخر → مزدوج متحيز', en: 'Two independent issues (taxes & education) in one question; one may support only one → double-barreled biased' }
+                },
+                {
+                    q: { ar: '<strong>السؤال 13:</strong> حدّد نوع السؤال: «ما مدى رضاك عن الطعام والخدمة في المطعم؟»', en: '<strong>Question 13:</strong> Determine the type: "How satisfied are you with the food and service at the restaurant?"' },
+                    options: [
+                        { ar: 'متحيز؛ لأنه يتناول أكثر من مسألة واحدة', en: 'Biased; because it addresses more than one issue' },
+                        { ar: 'غير متحيز؛ لأنه واضح', en: 'Unbiased; because it is clear' },
+                        { ar: 'متحيز؛ لأنه يشجّع الرضا', en: 'Biased; because it encourages satisfaction' },
+                        { ar: 'غير متحيز؛ لأنه شامل', en: 'Unbiased; because it is comprehensive' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 'الطعام والخدمة مسألتان مختلفتان؛ الرضا عن إحداهما لا يعني الرضا عن الأخرى → مزدوج متحيز', en: 'Food and service are different issues; satisfaction with one doesn\'t mean the other → double-barreled biased' }
+                },
+                {
+                    q: { ar: '<strong>السؤال 14:</strong> حدّد نوع السؤال: «هل ترى أن النظام الجديد للزي والحضور مناسب؟»', en: '<strong>Question 14:</strong> Determine the type: "Do you find the new uniform and attendance policy appropriate?"' },
+                    options: [
+                        { ar: 'غير متحيز؛ لأنه محايد', en: 'Unbiased; because it is neutral' },
+                        { ar: 'متحيز؛ لأنه يشجّع الرفض', en: 'Biased; because it encourages rejection' },
+                        { ar: 'متحيز؛ لأنه يتناول أكثر من مسألة واحدة', en: 'Biased; because it addresses more than one issue' },
+                        { ar: 'غير متحيز؛ لأنه رسمي', en: 'Unbiased; because it is formal' }
+                    ],
+                    correct: 2,
+                    answer: { ar: 'الزي والحضور مسألتان في سؤال واحد → مزدوج متحيز', en: 'Uniform and attendance are two issues in one question → double-barreled biased' }
+                },
+                {
+                    q: { ar: '<strong>السؤال 15:</strong> حدّد نوع السؤال: «ما مدى رضاك عن راتبك وساعات عملك؟»', en: '<strong>Question 15:</strong> Determine the type: "How satisfied are you with your salary and work hours?"' },
+                    options: [
+                        { ar: 'متحيز؛ لأنه يتناول أكثر من مسألة واحدة', en: 'Biased; because it addresses more than one issue' },
+                        { ar: 'غير متحيز؛ لأنه واضح ولا يشجّع إجابة', en: 'Unbiased; because it is clear and does not encourage' },
+                        { ar: 'متحيز؛ لأنه يشجّع الرضا', en: 'Biased; because it encourages satisfaction' },
+                        { ar: 'غير متحيز؛ لأنه مزدوج', en: 'Unbiased; because it is double' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 'الراتب وساعات العمل مسألتان منفصلتان دمجتا في سؤال واحد → مزدوج متحيز', en: 'Salary and work hours are separate issues merged into one question → double-barreled biased' }
+                }
+            ]
+        },
+        {
+            id: 'sec4',
+            title: { ar: '🔹 القسم 4: المفاهيم والأسباب (Q16-Q20)', en: '🔹 Section 4: Concepts & Reasons (Q16-Q20)' },
+            questions: [
+                {
+                    q: { ar: '<strong>السؤال 16:</strong> يكون سؤال الاستطلاع متحيزًا عندما:', en: '<strong>Question 16:</strong> A survey question is biased when:' },
+                    svg: svgGraphs.bias_types_overview,
+                    options: [
+                        { ar: 'يشجّع على إجابة معينة أو يتناول أكثر من مسألة واحدة', en: 'It encourages a particular answer or addresses more than one issue' },
+                        { ar: 'يكون واضحًا ويتناول مسألة واحدة', en: 'It is clear and addresses one issue' },
+                        { ar: 'يُطرح على عينة عشوائية', en: 'It is asked to a random sample' },
+                        { ar: 'يحتوي على أعداد أو قياسات', en: 'It contains numbers or measurements' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 'التحيز في الصياغة نوعان: التوجيه لإجابة معينة، أو دمج أكثر من مسألة في سؤال واحد', en: 'Wording bias has two types: leading to a particular answer, or merging multiple issues in one question' }
+                },
+                {
+                    q: { ar: '<strong>السؤال 17:</strong> السبب الرئيسي لتحيز السؤال «لا توافق على وجوب تقديم الكافتيريا لطعام صحي؟» هو:', en: '<strong>Question 17:</strong> The main reason for bias in "Don\'t you agree the cafeteria should serve healthy food?" is:' },
+                    options: [
+                        { ar: 'الصياغة تشجّع على الموافقة (إجابة معينة)', en: 'The wording encourages agreement (a particular answer)' },
+                        { ar: 'يتناول أكثر من مسألة', en: 'It addresses more than one issue' },
+                        { ar: 'غير واضح لغوياً', en: 'It is linguistically unclear' },
+                        { ar: 'يستهدف فئة محددة', en: 'It targets a specific group' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 'صيغة النفي الاستفهامي «لا توافق» مع وصف إيجابي «صحي» تدفع للموافقة → تشجيع إجابة معينة', en: 'The negative interrogative "Don\'t you agree" with positive descriptor "healthy" pushes agreement → encouraging a particular answer' }
+                },
+                {
+                    q: { ar: '<strong>السؤال 18:</strong> أي مما يلي شرط لسؤال استطلاع غير متحيز؟', en: '<strong>Question 18:</strong> Which of the following is a condition for an unbiased survey question?' },
+                    options: [
+                        { ar: 'واضح، محايد، يتناول مسألة واحدة، ولا يشجّع إجابة معينة', en: 'Clear, neutral, addresses one issue, and does not encourage a particular answer' },
+                        { ar: 'يحتوي على رأي الباحث', en: 'Contains the researcher\'s opinion' },
+                        { ar: 'يستخدم كلمات عاطفية لجذب الانتباه', en: 'Uses emotional words to attract attention' },
+                        { ar: 'يدمج عدة مسائل لتوفير الوقت', en: 'Merges several issues to save time' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 'الشروط: وضوح + حياد + مسألة واحدة + عدم التشجيع على إجابة', en: 'Conditions: clarity + neutrality + one issue + no encouragement' }
+                },
+                {
+                    q: { ar: '<strong>السؤال 19:</strong> ما أثر استخدام أسئلة متحيزة على نتائج الدراسة؟', en: '<strong>Question 19:</strong> What is the effect of using biased questions on study results?' },
+                    svg: svgGraphs.bias_effects,
+                    options: [
+                        { ar: 'تشويه النتائج وإحداث تحيز في الاستجابات', en: 'Distorting results and creating response bias' },
+                        { ar: 'تحسين دقة النتائج', en: 'Improving result accuracy' },
+                        { ar: 'لا أثر لها إذا كانت العينة عشوائية', en: 'No effect if the sample is random' },
+                        { ar: 'زيادة حجم العينة تلقائياً', en: 'Automatically increasing sample size' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 'الأسئلة المتحيزة توجّه المستجيبين فتنتج إجابات مشوّهة واستنتاجات خاطئة حتى لو كانت العينة عشوائية', en: 'Biased questions lead respondents, producing distorted responses and wrong conclusions even with a random sample' }
+                },
+                {
+                    q: { ar: '<strong>السؤال 20:</strong> السؤال «مزدوج الصياغة» (Double-barreled) هو السؤال الذي:', en: '<strong>Question 20:</strong> A "double-barreled" question is one that:' },
+                    options: [
+                        { ar: 'يتناول أكثر من مسألة واحدة في سؤال واحد', en: 'Addresses more than one issue in a single question' },
+                        { ar: 'له إجابتان محتملتان فقط', en: 'Has only two possible answers' },
+                        { ar: 'يُطرح مرتين للتحقق', en: 'Is asked twice for verification' },
+                        { ar: 'يحتوي على رقمين', en: 'Contains two numbers' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 'المزدوج يدمج مسألتين أو أكثر، فيصبح جواب المستجيب غامضاً بالنسبة للمحلل', en: 'Double-barreled merges two or more issues, making the respondent\'s answer ambiguous for analysis' }
+                }
+            ]
+        },
+        {
+            id: 'sec5',
+            title: { ar: '🔹 القسم 5: إعادة الصياغة والتصميم (Q21-Q25)', en: '🔹 Section 5: Rewriting & Design (Q21-Q25)' },
+            questions: [
+                {
+                    q: { ar: '<strong>السؤال 21:</strong> أي صياغة بديلة محايدة للسؤال المتحيز «لا توافق على وجوب تقديم الكافتيريا لطعام صحي؟»', en: '<strong>Question 21:</strong> Which neutral alternative wording for the biased "Don\'t you agree the cafeteria should serve healthy food?"' },
+                    svg: svgGraphs.rewrite_flow,
+                    options: [
+                        { ar: '«ما رأيك في الطعام المقدَّم في الكافتيريا؟»', en: '"What is your opinion of the food served in the cafeteria?"' },
+                        { ar: '«أليس طعام الكافتيريا صحياً؟»', en: '"Isn\'t the cafeteria food healthy?"' },
+                        { ar: '«هل توافق على طعام الكافتيريا الصحي والخدمات؟»', en: '"Do you agree with the healthy cafeteria food and services?"' },
+                        { ar: '«لماذا طعام الكافتيريا رائع؟»', en: '"Why is the cafeteria food wonderful?"' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 'الصياغة المحايدة تسأل عن الرأي بدون إيحاء أو دمج مسائل', en: 'Neutral wording asks for opinion without suggestion or merging issues' }
+                },
+                {
+                    q: { ar: '<strong>السؤال 22:</strong> أفضل إعادة صياغة للسؤال «ألا تعتقد أن الواجب المنزلي مرهق؟» هي:', en: '<strong>Question 22:</strong> The best rewrite of "Don\'t you think homework is burdensome?" is:' },
+                    options: [
+                        { ar: '«كم ساعة تقضي في الواجب المنزلي يومياً؟»', en: '"How many hours do you spend on homework daily?"' },
+                        { ar: '«أليس الواجب مرهقاً جداً؟»', en: '"Isn\'t homework very burdensome?"' },
+                        { ar: '«هل توافق أن الواجب مرهق وممل؟»', en: '"Do you agree homework is burdensome and boring?"' },
+                        { ar: '«لماذا يحب الجميع الواجب؟»', en: '"Why does everyone love homework?"' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 'التحويل إلى سؤال قياس كمي محايد يلغي التوجيه', en: 'Converting to a neutral quantitative measurement question removes leading' }
+                },
+                {
+                    q: { ar: '<strong>السؤال 23:</strong> لإصلاح السؤال المزدوج «ما رأيك بالطعام والخدمة؟» يجب:', en: '<strong>Question 23:</strong> To fix the double question "What do you think of the food and service?" one should:' },
+                    options: [
+                        { ar: 'تقسيمه إلى سؤالين منفصلين (واحد للطعام وآخر للخدمة)', en: 'Split it into two separate questions (one for food, one for service)' },
+                        { ar: 'إضافة كلمة «جيدة» للتوضيح', en: 'Add the word "good" for clarity' },
+                        { ar: 'جعله سؤال نعم/لا', en: 'Make it yes/no' },
+                        { ar: 'طرحه على عينة أكبر', en: 'Ask a larger sample' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 'كل مسألة تحتاج سؤالاً مستقلاً حتى تكون الإجابة قابلة للتفسير', en: 'Each issue needs its own question so answers are interpretable' }
+                },
+                {
+                    q: { ar: '<strong>السؤال 24:</strong> أي الأسئلة التالية غير متحيز؟', en: '<strong>Question 24:</strong> Which of the following questions is unbiased?' },
+                    options: [
+                        { ar: '«كم دقيقة تستغرق للوصول إلى المدرسة؟»', en: '"How many minutes does it take you to get to school?"' },
+                        { ar: '«ألا توافق أن المواصلات سيئة؟»', en: '"Don\'t you agree transportation is bad?"' },
+                        { ar: '«هل تفضل السيارة الرائعة أم الباص الممل؟»', en: '"Do you prefer the wonderful car or the boring bus?"' },
+                        { ar: '«ما رأيك بالمواصلات والأسعار؟»', en: '"What do you think of transportation and prices?"' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 'سؤال كمي محايد، مسألة واحدة، بدون إيحاء → غير متحيز', en: 'Neutral quantitative question, one issue, no suggestion → unbiased' }
+                },
+                {
+                    q: { ar: '<strong>السؤال 25:</strong> أي الأسئلة التالية متحيز؟', en: '<strong>Question 25:</strong> Which of the following questions is biased?' },
+                    options: [
+                        { ar: '«ألا توافق أن السياسة الجديدة رائعة؟»', en: '"Don\'t you agree the new policy is wonderful?"' },
+                        { ar: '«كم مرة تمارس الرياضة أسبوعياً؟»', en: '"How many times do you exercise weekly?"' },
+                        { ar: '«ما رأيك في الجدول المدرسي الجديد؟»', en: '"What is your opinion of the new school schedule?"' },
+                        { ar: '«كم كتاباً تقرأ شهرياً؟»', en: '"How many books do you read monthly?"' }
+                    ],
+                    correct: 0,
+                    answer: { ar: '«ألا توافق» + «رائعة» صياغة موجّهة تشجّع الموافقة → متحيز', en: '"Don\'t you agree" + "wonderful" is leading wording encouraging agreement → biased' }
+                }
+            ]
+        },
+        {
+            id: 'sec6',
+            title: { ar: '🔹 القسم 6: تصميم الدراسة الإحصائية (Q26-Q30)', en: '🔹 Section 6: Statistical Study Design (Q26-Q30)' },
+            questions: [
+                {
+                    q: { ar: '<strong>السؤال 26:</strong> تشمل مصادر التحيز في الدراسات الإحصائية:', en: '<strong>Question 26:</strong> Sources of bias in statistical studies include:' },
+                    svg: svgGraphs.study_design,
+                    options: [
+                        { ar: 'الأسئلة المتحيزة، والعينات المتحيزة، وعدم الاستجابة', en: 'Biased questions, biased samples, and non-response' },
+                        { ar: 'الأسئلة الواضحة فقط', en: 'Only clear questions' },
+                        { ar: 'العينات العشوائية فقط', en: 'Only random samples' },
+                        { ar: 'حجم المجتمع الكبير', en: 'Large population size' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 'التحيز قد يأتي من صياغة السؤال، أو طريقة اختيار العينة، أو رفض بعض الأفراد الاستجابة', en: 'Bias can come from question wording, sample selection method, or some individuals refusing to respond' }
+                },
+                {
+                    q: { ar: '<strong>السؤال 27:</strong> الفرق بين تحيز السؤال وتحيز العينة هو:', en: '<strong>Question 27:</strong> The difference between question bias and sample bias is:' },
+                    options: [
+                        { ar: 'تحيز السؤال في الصياغة، وتحيز العينة في طريقة الاختيار', en: 'Question bias is in wording, sample bias is in selection method' },
+                        { ar: 'لا فرق بينهما', en: 'No difference between them' },
+                        { ar: 'تحيز السؤال في العينة، وتحيز العينة في الصياغة', en: 'Question bias is in sample, sample bias is in wording' },
+                        { ar: 'كلاهما يحدث فقط في التجارب', en: 'Both occur only in experiments' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 'السؤال المتحيز صياغته توجّه الإجابة، والعينة المتحيزة لا تمثل المجتمع بسبب طريقة اختيارها', en: 'A biased question\'s wording leads the answer; a biased sample doesn\'t represent the population due to selection method' }
+                },
+                {
+                    q: { ar: '<strong>السؤال 28:</strong> لضمان دراسة إحصائية جيدة يجب:', en: '<strong>Question 28:</strong> To ensure a good statistical study one must:' },
+                    options: [
+                        { ar: 'استخدام أسئلة واضحة غير متحيزة وعينة عشوائية', en: 'Use clear unbiased questions and a random sample' },
+                        { ar: 'استخدام أسئلة موجّهة لتسريع الإجابات', en: 'Use leading questions to speed up responses' },
+                        { ar: 'اختيار العينة من المتطوعين فقط', en: 'Select the sample from volunteers only' },
+                        { ar: 'دمج عدة مسائل في كل سؤال', en: 'Merge several issues in each question' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 'جودة الدراسة = أسئلة محايدة + عينة ممثلة + تصميم مناسب', en: 'Study quality = neutral questions + representative sample + proper design' }
+                },
+                {
+                    q: { ar: '<strong>السؤال 29:</strong> دراسة نشرت: «90% يؤيدون خفض الضرائب» اعتماداً على متطوعين أجابوا على سؤال «ألا توافق أن الضرائب مرتفعة؟». ما مشكلة الدراسة؟', en: '<strong>Question 29:</strong> A study published: "90% support tax cuts" based on volunteers answering "Don\'t you agree taxes are high?" What is the problem?' },
+                    options: [
+                        { ar: 'تحيز في السؤال (موجّه) وتحيز في العينة (متطوعون)', en: 'Question bias (leading) and sample bias (volunteers)' },
+                        { ar: 'لا مشكلة؛ النسبة عالية', en: 'No problem; the percentage is high' },
+                        { ar: 'العينة كبيرة جداً', en: 'The sample is too large' },
+                        { ar: 'السؤال مزدوج فقط', en: 'The question is only double-barreled' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 'السؤال موجّه («ألا توافق» + «مرتفعة») والعينة متطوعون (غير عشوائية) → تحيز مزدوج المصدر', en: 'The question is leading ("Don\'t you agree" + "high") and the sample is volunteers (non-random) → dual-source bias' }
+                },
+                {
+                    q: { ar: '<strong>السؤال 30:</strong> أفضل سؤال لمعرفة رأي الطلاب في الجدول المدرسي الجديد هو:', en: '<strong>Question 30:</strong> The best question to learn students\' opinion of the new school schedule is:' },
+                    options: [
+                        { ar: '«ما رأيك في الجدول المدرسي الجديد؟»', en: '"What is your opinion of the new school schedule?"' },
+                        { ar: '«ألا توافق أن الجدول الجديد رائع؟»', en: '"Don\'t you agree the new schedule is wonderful?"' },
+                        { ar: '«هل تفضل الجدول الجديد والمواد الجديدة؟»', en: '"Do you prefer the new schedule and new subjects?"' },
+                        { ar: '«لماذا الجدول القديم سيئ؟»', en: '"Why is the old schedule bad?"' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 'صياغة مفتوحة محايدة، مسألة واحدة، بدون إيحاء → الأفضل', en: 'Open neutral wording, one issue, no suggestion → the best' }
+                }
+            ]
+        }
+    ]
+};
+
+function shuffleArray(array) {
+    const arr = [...array];
+    for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(rng() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+}
+
+function prepareShuffledExam() {
+    rng = mulberry32(currentSeed);
+    examData = JSON.parse(JSON.stringify(originalExamData));
+    correctAnswersMap = {};
+    let globalIdx = 0;
+    examData.sections.forEach((section) => {
+        section.questions = shuffleArray(section.questions);
+        section.questions.forEach((q) => {
+            const optionsWithCorrect = q.options.map((opt, idx) => ({ option: opt, isCorrect: idx === q.correct }));
+            const shuffledOptions = shuffleArray(optionsWithCorrect);
+            q.options = shuffledOptions.map(o => o.option);
+            q.correct = shuffledOptions.findIndex(o => o.isCorrect);
+            correctAnswersMap[globalIdx] = String.fromCharCode(97 + q.correct);
+            globalIdx++;
+        });
+    });
+}
+
+function reshuffleExam() {
+    const msg = currentLang === 'ar' ? '🔄 سيتم إنشاء أسئلة جديدة ومسح إجاباتك. هل أنت متأكد؟' : '🔄 New questions will be generated. Are you sure?';
+    if (confirm(msg)) {
+        currentSeed = Date.now(); timeRemaining = TOTAL_TIME; answersVisible = false;
+        prepareShuffledExam(); renderExam(); saveState();
+        alert(currentLang === 'ar' ? '🎲 تم تغيير الأسئلة! حظاً موفقاً! 🍀' : '🎲 Questions changed! Good luck! 🍀');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+}
+
+function setLanguage(lang) {
+    currentLang = lang;
+    document.documentElement.lang = lang;
+    document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+    document.getElementById('btn-ar').classList.toggle('active', lang === 'ar');
+    document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+    document.body.classList.toggle('en-mode', lang === 'en');
+    
+    document.querySelectorAll('[data-ar]').forEach(el => {
+        el.textContent = el.getAttribute('data-' + lang);
+    });
+    
+    document.querySelectorAll('[data-placeholder-ar]').forEach(el => {
+        el.placeholder = el.getAttribute('data-placeholder-' + lang);
+    });
+    
+    renderExam(); saveState(false);
+}
+
+function renderExam() {
+    const container = document.getElementById('exam-content');
+    const labels = { ar: { option: ['a)', 'b)', 'c)', 'd)'], answer: '✅ الإجابة:' }, en: { option: ['a)', 'b)', 'c)', 'd)'], answer: '✅ Answer:' } };
+    const lbl = labels[currentLang];
+    let html = '';
+    let globalIdx = 0;
+    
+    examData.sections.forEach((section, secIdx) => {
+        const badgeClass = ['module-1', 'module-2', 'module-3', 'module-4', 'module-5', 'module-6'][secIdx];
+        html += '<section class="bg-white p-6 rounded-2xl shadow-lg border-2 border-amber-100">';
+        html += '<div class="text-center mb-4"><span class="module-badge ' + badgeClass + '">' + section.title[currentLang] + '</span></div>';
+        html += '<ol class="space-y-4 text-sm">';
+        
+        section.questions.forEach((q) => {
+            html += '<li class="border-r-4 border-amber-400 pr-4 py-2" id="q-' + globalIdx + '" style="border-right: 4px solid #d97706; padding-right: 1rem;">';
+            html += '<strong class="text-amber-700">' + (globalIdx + 1) + '.</strong> ' + q.q[currentLang] + '<br>';
+            if (q.svg) html += '<div class="graph-container">' + q.svg + '</div>';
+            
+            q.options.forEach((opt, oIdx) => {
+                html += '<label class="cursor-pointer block mt-2 mr-4 hover:bg-amber-50 rounded-lg p-2 transition" style="margin-right: 1rem;">';
+                html += '<input type="radio" name="q' + globalIdx + '" value="' + String.fromCharCode(97 + oIdx) + '" class="mr-2 ml-2">';
+                html += '<span class="arabic-math">' + lbl.option[oIdx] + ' ' + opt[currentLang] + '</span>';
+                html += '</label>';
+            });
+            
+            html += '<div class="answer-box text-green-700 mt-3 font-medium ' + (answersVisible ? '' : 'hidden') + ' bg-green-50 rounded-lg p-3 border border-green-200">';
+            html += lbl.answer + ' ' + lbl.option[q.correct] + ' <span class="arabic-math">' + q.options[q.correct][currentLang] + '</span><br>';
+            html += '<span class="text-sm text-green-700 mt-2 block arabic-math">' + q.answer[currentLang] + '</span>';
+            html += '</div></li>';
+            globalIdx++;
+        });
+        
+        html += '</ol></section>';
+    });
+    
+    container.innerHTML = html;
+}
+
+function startTimer() {
+    updateTimerDisplay();
+    timerInterval = setInterval(() => {
+        timeRemaining--;
+        updateTimerDisplay();
+        if (timeRemaining % 60 === 0) saveState(false);
+        if (timeRemaining <= 600) document.getElementById('timer').classList.add('timer-warning');
+        if (timeRemaining <= 0) {
+            clearInterval(timerInterval);
+            alert(currentLang === 'ar' ? "⏰ انتهى الوقت!" : "⏰ Time's up!");
+            gradeExam();
+        }
+    }, 1000);
+}
+
+function updateTimerDisplay() {
+    const m = Math.floor(timeRemaining / 60);
+    const s = timeRemaining % 60;
+    document.getElementById('timer').textContent = m.toString().padStart(2,'0') + ':' + s.toString().padStart(2,'0');
+}
+
+function toggleAnswers() {
+    answersVisible = !answersVisible;
+    document.querySelectorAll('.answer-box').forEach(el => el.classList.toggle('hidden', !answersVisible));
+    saveState(false);
+}
+
+function gradeExam() {
+    let correctCount = 0;
+    const sectionScores = new Array(TOTAL_SECTIONS).fill(0);
+    
+    for (let i = 0; i < TOTAL_QUESTIONS; i++) {
+        const sel = document.querySelector('input[name="q'+i+'"]:checked');
+        const li = document.getElementById('q-' + i);
+        if (li) {
+            const isCorrect = sel && sel.value === correctAnswersMap[i];
+            if (isCorrect) {
+                correctCount++;
+                li.classList.add('correct');
+                li.classList.remove('incorrect');
+                sectionScores[Math.floor(i / QUESTIONS_PER_SECTION)]++;
+            } else {
+                li.classList.add('incorrect');
+                li.classList.remove('correct');
+            }
+        }
+    }
+    
+    const score = Math.round((correctCount / TOTAL_QUESTIONS) * 100);
+    document.getElementById('res-total').textContent = score + ' / 100';
+    document.getElementById('res-name').textContent = document.getElementById('studentName').value || (currentLang === 'ar' ? 'بطل' : 'Champion');
+    document.getElementById('res-date').textContent = new Date().toLocaleDateString(currentLang === 'ar' ? 'ar-AE' : 'en-US');
+    
+    const pc = document.getElementById('sections-performance');
+    pc.innerHTML = '';
+    examData.sections.forEach((s, idx) => {
+        pc.innerHTML += '<div class="flex justify-between items-center p-3 bg-white rounded-lg"><span class="text-gray-700">' + s.title[currentLang] + '</span><span class="font-bold text-amber-700">' + sectionScores[idx] + '/' + QUESTIONS_PER_SECTION + '</span></div>';
+    });
+    
+    const badge = document.getElementById('success-badge');
+    document.getElementById('success-percent').textContent = score + '%';
+    
+    if (currentLang === 'ar') {
+        if (score >= 90) { badge.textContent = '🌟 ممتاز جداً!'; badge.className = 'success-badge grade-excellent'; }
+        else if (score >= 75) { badge.textContent = '👏 ممتاز!'; badge.className = 'success-badge grade-good'; }
+        else if (score >= 50) { badge.textContent = '👍 جيد'; badge.className = 'success-badge grade-pass'; }
+        else { badge.textContent = '💪 حاول مرة أخرى'; badge.className = 'success-badge grade-fail'; }
+    } else {
+        if (score >= 90) { badge.textContent = '🌟 Outstanding!'; badge.className = 'success-badge grade-excellent'; }
+        else if (score >= 75) { badge.textContent = '👏 Excellent!'; badge.className = 'success-badge grade-good'; }
+        else if (score >= 50) { badge.textContent = '👍 Good'; badge.className = 'success-badge grade-pass'; }
+        else { badge.textContent = '💪 Try Again'; badge.className = 'success-badge grade-fail'; }
+    }
+    
+    document.getElementById('results-panel').classList.remove('hidden');
+    document.getElementById('results-panel').scrollIntoView({ behavior: 'smooth' });
+    if (timerInterval) clearInterval(timerInterval);
+}
+
+function sendResultsToEmail() {
+    const btn = document.getElementById('sendEmailBtn');
+    const status = document.getElementById('emailStatus');
+    btn.disabled = true;
+    btn.textContent = currentLang === 'ar' ? '⏳ جاري الإرسال...' : '⏳ Sending...';
+    
+    const name = document.getElementById('studentName').value || 'N/A';
+    const studentClass = document.getElementById('studentClass').value || 'N/A';
+    const date = document.getElementById('examDate').value || new Date().toLocaleDateString();
+    const score = document.getElementById('res-total').textContent;
+    const successRate = document.getElementById('success-percent').textContent;
+    const badge = document.getElementById('success-badge').textContent;
+    
+    let questionsHTML = '<div style="font-family:Arial; direction:rtl;">';
+    questionsHTML += '<h2>📊 ' + (currentLang === 'ar' ? 'نتيجة امتحان الأسئلة المتحيزة' : 'Biased Questions Exam Result') + '</h2>';
+    questionsHTML += '<p><strong>' + (currentLang === 'ar' ? 'الاسم' : 'Name') + ':</strong> ' + name + '</p>';
+    questionsHTML += '<p><strong>' + (currentLang === 'ar' ? 'الشعبة' : 'Class') + ':</strong> ' + studentClass + '</p>';
+    questionsHTML += '<p><strong>' + (currentLang === 'ar' ? 'التاريخ' : 'Date') + ':</strong> ' + date + '</p>';
+    questionsHTML += '<p><strong>' + (currentLang === 'ar' ? 'الدرجة' : 'Score') + ':</strong> ' + score + ' (' + successRate + '%)</p>';
+    questionsHTML += '<p><strong>' + (currentLang === 'ar' ? 'التقدير' : 'Grade') + ':</strong> ' + badge + '</p>';
+    questionsHTML += '<hr><h3>' + (currentLang === 'ar' ? 'تفاصيل الإجابات:' : 'Answer Details:') + '</h3><table style="width:100%; border-collapse:collapse;">';
+    questionsHTML += '<tr style="background:#d97706; color:white;"><th style="padding:8px; border:1px solid #ddd;">#</th><th style="padding:8px; border:1px solid #ddd;">' + (currentLang === 'ar' ? 'السؤال' : 'Question') + '</th><th style="padding:8px; border:1px solid #ddd;">' + (currentLang === 'ar' ? 'إجابة الطالب' : 'Student Answer') + '</th><th style="padding:8px; border:1px solid #ddd;">' + (currentLang === 'ar' ? 'الصحيحة' : 'Correct') + '</th><th style="padding:8px; border:1px solid #ddd;">' + (currentLang === 'ar' ? 'النتيجة' : 'Result') + '</th></tr>';
+    
+    let globalIdx = 0;
+    examData.sections.forEach((section) => {
+        questionsHTML += '<tr style="background:#fef3c7;"><td colspan="5" style="padding:8px; font-weight:bold; border:1px solid #ddd;">' + section.title.ar + '</td></tr>';
+        section.questions.forEach((q) => {
+            const sel = document.querySelector('input[name="q'+globalIdx+'"]:checked');
+            const sv = sel ? sel.value : null;
+            const cv = correctAnswersMap[globalIdx];
+            const ic = sv === cv;
+            let sat = currentLang === 'ar' ? '❌ لم يجب' : '❌ No answer';
+            let sac = '#dc2626';
+            if (sv) {
+                const si = sv.charCodeAt(0) - 97;
+                sat = q.options[si][currentLang];
+                sac = ic ? '#16a34a' : '#dc2626';
+            }
+            const cat = q.options[q.correct][currentLang];
+            const rb = ic ? '#f0fdf4' : '#fef2f2';
+            questionsHTML += '<tr style="background:' + rb + ';"><td style="padding:8px; border:1px solid #ddd; text-align:center;">' + (globalIdx+1) + '</td><td style="padding:8px; border:1px solid #ddd;">' + q.q.ar.replace(/<[^>]+>/g, '').substring(0, 80) + '...</td><td style="padding:8px; border:1px solid #ddd; color:' + sac + ';">' + sat + '</td><td style="padding:8px; border:1px solid #ddd; color:#16a34a;">' + cat + '</td><td style="padding:8px; border:1px solid #ddd; text-align:center;">' + (ic?'✅':'❌') + '</td></tr>';
+            globalIdx++;
+        });
+    });
+    questionsHTML += '</table></div>';
+    
+    const templateParams = {
+        to_email: TARGET_EMAIL,
+        student_name: name,
+        student_class: studentClass,
+        exam_date: date,
+        total_score: score,
+        success_rate: successRate,
+        grade: badge,
+        answers_table: questionsHTML
+    };
+    
+    emailjs.send(SERVICE_ID, TEMPLATE_ID, templateParams)
+        .then(() => {
+            status.textContent = currentLang === 'ar' ? '✅ تم الإرسال بنجاح!' : '✅ Sent successfully!';
+            status.style.color = '#16a34a';
+            btn.textContent = currentLang === 'ar' ? '✓ تم' : '✓ Sent';
+            alert(currentLang === 'ar' ? 'تم إرسال النتيجة للمعلم بنجاح!' : 'Result sent to teacher successfully!');
+        })
+        .catch((error) => {
+            status.textContent = currentLang === 'ar' ? '❌ فشل الإرسال' : '❌ Failed to send';
+            status.style.color = '#dc2626';
+            btn.disabled = false;
+            btn.textContent = currentLang === 'ar' ? '📧 حاول مرة أخرى' : '📧 Try Again';
+            alert(currentLang === 'ar' ? 'فشل الإرسال: ' + error.text : 'Failed: ' + error.text);
+        });
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+    const saved = loadState();
+    if (saved && saved.seed) {
+        currentSeed = saved.seed;
+        currentLang = saved.lang || 'ar';
+        timeRemaining = saved.timeRemaining !== undefined ? saved.timeRemaining : TOTAL_TIME;
+        answersVisible = saved.answersVisible || false;
+    } else {
+        currentSeed = Date.now();
+    }
+    
+    document.getElementById('btn-ar').classList.toggle('active', currentLang === 'ar');
+    document.getElementById('btn-en').classList.toggle('active', currentLang === 'en');
+    document.body.classList.toggle('en-mode', currentLang === 'en');
+    document.documentElement.lang = currentLang;
+    document.documentElement.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
+    
+    document.querySelectorAll('[data-ar]').forEach(el => {
+        el.textContent = el.getAttribute('data-' + currentLang);
+    });
+    
+    document.querySelectorAll('[data-placeholder-ar]').forEach(el => {
+        el.placeholder = el.getAttribute('data-placeholder-' + currentLang);
+    });
+    
+    prepareShuffledExam();
+    renderExam();
+    if (saved) {
+        if (saved.studentName) document.getElementById('studentName').value = saved.studentName;
+        if (saved.studentClass) document.getElementById('studentClass').value = saved.studentClass;
+        if (saved.examDate) document.getElementById('examDate').value = saved.examDate;
+        if (saved.answers) restoreAnswers(saved.answers);
+    }
+    setupAnswerListeners();
+    setupInputListeners();
+    startTimer();
+});
+window.addEventListener('beforeunload', () => saveState(false));
+</script>
+</body>
+</html>
